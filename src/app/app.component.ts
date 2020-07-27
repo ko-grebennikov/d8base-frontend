@@ -73,7 +73,8 @@ export class AppComponent implements OnInit {
             this.splashScreen.hide();
             this.initDarkMode();
             this.toggleMenu();
-            this.pusher.requestPushPermission();
+            // Temporary disabled. Do not remove!
+            // this.pusher.requestPushPermission();
         });
     }
 
