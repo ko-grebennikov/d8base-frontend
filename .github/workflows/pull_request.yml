@@ -9,6 +9,12 @@ jobs:
                 node-version: [13.x]
 
         steps:
+            - name: Print context
+              run: |
+                  echo "$GITHUB_CONTEXT"
+              env:
+                  GITHUB_CONTEXT: ${{ toJson(github) }}
+            
             - name: Step that prints name of pull request's author
               run: |
                 echo "Pull request's author is: ${REQUEST_AUTHOR}"
