@@ -15,9 +15,9 @@ jobs:
               env:
                 BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
           
-#            - uses: actions/checkout@v1
-#              with:
-#                ref: master
+            - uses: actions/checkout@v2
+              with:
+                ref: ${{ github.event.pull_request.head.ref }}
 
 #            - name: Node ${{ matrix.node-version }}
 #              uses: actions/setup-node@v1
