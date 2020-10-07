@@ -44,7 +44,7 @@ jobs:
                 comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
               env:
                 GITHUB_TOKEN: ${{ secrets.D8B_FRONTEND_TOKEN }}
-              if: ${{ failure() }}
+              if: ${{ success() }}
 
 #            - name: Node ${{ matrix.node-version }}
 #              uses: actions/setup-node@v1
