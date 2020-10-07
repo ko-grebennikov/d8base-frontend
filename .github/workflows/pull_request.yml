@@ -52,3 +52,12 @@ jobs:
   
  #           - name: Test
  #             run: npm run test -- --no-watch
+       
+             - uses: superbrothers/close-pull-request@v2
+               if: {{ failure() }}
+               with:
+              # Optional. Post a issue comment just before closing a pull request.
+                  comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
+               env:
+                   GITHUB_TOKEN: ${{ secrets.D8B-FRONTEND-TOKEN }}
+              
