@@ -31,7 +31,7 @@ jobs:
                   echo "Check 4"
                   
             - name: Check 5
-              #if: ${{ failure() }}
+              if: ${{ failure() }}
               run: |
                   echo "Check 5"
 
