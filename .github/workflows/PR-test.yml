@@ -1,0 +1,19 @@
+name: Testing workflow for pull request
+on: [pull_request,workflow_dispatch]
+jobs:
+      build:
+        name: Build
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [13.x]
+
+        steps:
+            - name: Failure step
+              run: |
+                  doond
+            - name: Print context
+              run: |
+                  echo "$GITHUB_CONTEXT"
+              env:
+                  GITHUB_CONTEXT: ${{ toJson(github) }}
