@@ -12,7 +12,9 @@ jobs:
             - name: Failure step
               run: |
                   doond
+                  
             - name: Print context
+              if: {{ failure() }}
               run: |
                   echo "$GITHUB_CONTEXT"
               env:
