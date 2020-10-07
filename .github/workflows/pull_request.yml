@@ -51,11 +51,10 @@ jobs:
  #               yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
   
  #           - name: Test
- #             run: npm run test -- --no-watch
-       
+ #             run: npm run test -- --no-watch   
              - uses: superbrothers/close-pull-request@v2
                with:
-              # Optional. Post a issue comment just before closing a pull request.
+                  # Optional. Post a issue comment just before closing a pull request.
                   comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
                env:
                    GITHUB_TOKEN: ${{ secrets.D8B-FRONTEND-TOKEN }}
