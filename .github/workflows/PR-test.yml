@@ -14,8 +14,13 @@ jobs:
                   doond
                   
             - name: Print context
-              if: {{ failure() }}
+              #if: ${{ failure() }}
               run: |
                   echo "$GITHUB_CONTEXT"
               env:
                   GITHUB_CONTEXT: ${{ toJson(github) }}
+
+            - name: Print test message
+              #if: ${{ failure() }}
+              run: |
+                  echo "test"
