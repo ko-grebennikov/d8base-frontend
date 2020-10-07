@@ -4,28 +4,34 @@ jobs:
       build:
         name: Build
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [13.x]
 
         steps:
             - name: Failure step
               run: |
                   doond
                   
-            - name: Print context
-              #if: ${{ failure() }}
-              run: |
-                  echo "$GITHUB_CONTEXT"
-              env:
-                  GITHUB_CONTEXT: ${{ toJson(github) }}
-
-            - name: Print test message
+            - name: Check 1
               if: ${{ failure() }}
               run: |
-                  echo "test1"
+                  echo "Check 1"
 
-            - name: Print test message
+            - name: Check 2
               #if: ${{ failure() }}
               run: |
-                  echo "test2"
+                  echo "Check 2"
+
+            - name: Check 3
+              #if: ${{ failure() }}
+              run: |
+                  echo "Check 3"
+
+            - name: Check 4
+              #if: ${{ failure() }}
+              run: |
+                  echo "Check 4"
+                  
+            - name: Check 5
+              #if: ${{ failure() }}
+              run: |
+                  echo "Check 5"
+
