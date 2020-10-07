@@ -23,4 +23,9 @@ jobs:
             - name: Print test message
               if: ${{ failure() }}
               run: |
-                  echo "test"
+                  echo "test1"
+
+            - name: Print test message
+              #if: ${{ failure() }}
+              run: |
+                  echo "test2"
