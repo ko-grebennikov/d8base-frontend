@@ -40,7 +40,7 @@ jobs:
                 subject: Github Actions - test failure
                 # Literal body:
                 body: Tests of ${{github.repository}} are failure
-                to: ko.grebennikov@gmail.com
+                to: k.grebennikov@maxi-booking.ru
                 from: Github actions # <user@example.com>
                 # Optional content type (defaults to text/plain):
                 content_type: text/html
