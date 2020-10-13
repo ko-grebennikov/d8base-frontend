@@ -34,7 +34,7 @@ jobs:
                 command: ls -a
                 host: ${{ secrets.STAGEHOST }}
                 username: mb
-                #passphrase: ${{ secrets.PASSPHRASE }}
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
                 privateKey: ${{ secrets.STAGEDEPLKEY }}
     
       
