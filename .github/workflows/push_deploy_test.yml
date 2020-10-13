@@ -27,6 +27,16 @@ jobs:
 
 #            - name: Test
 #              run: npm run test -- --no-watch
+
+            - name: ls -a via ssh
+              uses: garygrossgarten/github-action-ssh@release
+              with:
+                command: ls -a
+                host: ${{ secrets.HOST }}
+                username: mb
+                #passphrase: ${{ secrets.PASSPHRASE }}
+                privateKey: ${{ secrets.PRIVATE_KEY}}
+    
       
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
