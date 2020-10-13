@@ -28,15 +28,16 @@ jobs:
 #            - name: Test
 #              run: npm run test -- --no-watch
 
-            - name: ls -a via ssh
-              uses: garygrossgarten/github-action-ssh@release
+            - name: git pull
+              uses: appleboy/ssh-action@master
               with:
-                command: ls -a
                 host: ${{ secrets.STAGEHOST }}
                 username: mb
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
-                privateKey: ${{ secrets.STAGEDEPLKEY }}
-    
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: |
+                    cd ${{ secrets.APPDIR }}
+                    git pull    
       
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
