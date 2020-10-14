@@ -1,5 +1,5 @@
 name: tests
-on: [push,workflow_dispatch]
+on: [workflow_dispatch]
 jobs:
     build:
         name: Build
@@ -38,6 +38,16 @@ jobs:
                 script: |
                     cd ${{ secrets.APPDIR }}
                     git pull    
+
+            - name: npm install
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-front-npm-install.yml up
+                       
       
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
