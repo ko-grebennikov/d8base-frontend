@@ -69,7 +69,6 @@ jobs:
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
               if: ${{ failure() }}
-#always() }}
               with:
                 server_address: smtp.yandex.ru
                 server_port: 465
@@ -77,7 +76,7 @@ jobs:
                 password: ${{secrets.MAIL_PASSWORD}}
                 subject: Github Actions - test failure
                 # Literal body:
-                body: Tests of ${{github.repository}} are failure
+                body: Tests of ${{github.repository}} on push are failure
                 to: k.grebennikov@maxi-booking.ru
                 from: Github actions # <user@example.com>
                 # Optional content type (defaults to text/plain):
@@ -88,7 +87,6 @@ jobs:
             - name: Send email if success tests
               uses: dawidd6/action-send-mail@v2
               if: ${{ success() }}
-#always() }}
               with:
                 server_address: smtp.yandex.ru
                 server_port: 465
