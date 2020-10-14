@@ -56,7 +56,16 @@ jobs:
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: docker-compose -f /var/maxibooking/d8b-front-npm-build.yml up
-      
+
+            - name: nginx restart
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container restart mb-nginx
+
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
               if: ${{ failure() }}
