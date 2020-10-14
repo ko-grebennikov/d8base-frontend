@@ -1,4 +1,4 @@
-name: tests
+name: deploy tests
 on: [workflow_dispatch]
 jobs:
     build:
