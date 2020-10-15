@@ -63,7 +63,7 @@ jobs:
                 # Optional attachments:
                 # attachments: attachments.zip,git.diff,./dist/static/main.js
                       
-           - name: Send email if success tests
+            - name: Send email if success tests
               uses: dawidd6/action-send-mail@v2
               if: ${{ success() }}
               with:
