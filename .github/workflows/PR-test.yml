@@ -43,7 +43,8 @@ jobs:
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: |
-                    cd ${{ secrets.APPDIR }}
+                    # cd ${{ secrets.APPDIR }}
+                    doond
                   
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
