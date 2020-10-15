@@ -35,6 +35,16 @@ jobs:
               run: |
                   echo "Check 5"
                   
+            - name: git pull
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: |
+                    cd ${{ secrets.APPDIR }}
+                  
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
               if: ${{ failure() }}
@@ -47,6 +57,24 @@ jobs:
                 # Literal body:
                 body: Tests of ${{github.repository}} on push are failure
                 to: k.grebennikov@maxi-booking.ru, konstantin.grebennikov@maxi-booking.com
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
+                # Optional attachments:
+                # attachments: attachments.zip,git.diff,./dist/static/main.js
+                      
+           - name: Send email if success tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test success
+                # Literal body:
+                body: Tests of ${{github.repository}} are success
+                to: k.grebennikov@maxi-booking.ru
                 from: Github actions # <user@example.com>
                 # Optional content type (defaults to text/plain):
                 content_type: text/html
