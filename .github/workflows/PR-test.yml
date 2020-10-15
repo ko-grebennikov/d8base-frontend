@@ -44,7 +44,7 @@ jobs:
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: |
                     # cd ${{ secrets.APPDIR }}
-                    doond
+                    docker-compose -f /var/maxibooking/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
                   
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
