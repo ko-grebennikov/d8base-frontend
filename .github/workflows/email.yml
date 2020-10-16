@@ -1,0 +1,23 @@
+name: Testing workflow for pull request
+on: [workflow_dispatch]
+jobs:
+      build:
+        name: Build
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Send email if success tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test success
+                # Literal body:
+                body: Tests of ${{github.repository}} are success
+                to: k.grebennikov@maxi-booking.ru
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
