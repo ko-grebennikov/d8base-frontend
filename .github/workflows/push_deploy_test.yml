@@ -1,0 +1,98 @@
+name: deploy tests
+on: [workflow_dispatch]
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [13.x]
+
+        steps:
+            - uses: actions/checkout@v1
+
+            - name: Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Install
+              run: npm install
+
+            - name: copy env file
+              run: |
+                yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
+#            - name: Lint
+#              run: npm run lint
+
+#            - name: Test
+#              run: npm run test -- --no-watch
+
+            - name: git pull
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: |
+                    cd ${{ secrets.APPDIR }}
+                    git pull    
+
+            - name: npm install
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli npm install
+                                       
+            - name: front build
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+
+            - name: nginx restart
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container restart mb-nginx
+
+            - name: Send email if failure tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ failure() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test failure
+                body: Tests of ${{github.repository}} on push are not passed
+                to: ${{secrets.MAIL_RECEPIENTS}}
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
+                    
+            - name: Send email if success tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test success
+                # Literal body:
+                body: Tests of ${{github.repository}} completed successfully
+                to: ${{secrets.MAIL_RECEPIENTS}}
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html

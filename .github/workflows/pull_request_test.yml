@@ -1,0 +1,49 @@
+name: Pull request check
+on: [pull_request,workflow_dispatch]
+jobs:
+      build:
+        name: Build
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [13.x]
+
+        steps:
+            - name: Node ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - uses: actions/checkout@v2
+              with:
+                ref: ${{ github.event.pull_request.head.ref }}
+
+            - name: Check branch
+              run: git status
+
+            - name: Install
+              run: npm install
+
+            - name: copy env file
+              run: |
+                yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
+
+#            - name: Lint
+#              run: npm run lint
+
+            - name: Test
+              run: npm run test -- --no-watch
+                                        
+            - name: Send email if success tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: New pull request - ${{github.repository}}. Tests are completed
+                body: New pull request - ${{github.repository}}. Tests are completed
+                to: ${{secrets.PR_SUCCESS_RECEPIENTS}}
+                from: Github actions # <user@example.com>
+                content_type: text/html

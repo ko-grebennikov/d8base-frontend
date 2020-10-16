@@ -1,4 +1,4 @@
-name: Tests for pull request
+name: Close pull request
 on: [pull_request,workflow_dispatch]
 jobs:
       build:
@@ -9,21 +9,92 @@ jobs:
                 node-version: [13.x]
 
         steps:
-            - uses: actions/checkout@v1
-              with:
-                ref: master
-
-            - name: Node ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-
-            - name: Install
-              run: npm install
-
-            - name: copy env file
+            - name: Print context
               run: |
-                yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
+                  echo "$GITHUB_CONTEXT"
+              env:
+                  GITHUB_CONTEXT: ${{ toJson(github) }}
+            
+            - name: Step that prints name of pull request's author
+              run: |
+                echo "Pull request's author is: ${REQUEST_AUTHOR}"
+              env:
+                REQUEST_AUTHOR: ${{ github.actor }}
+                                                   # event.head_commit.author.name }}
+                
+            - name: Step that prints email of pull request's author
+              run: |
+                echo "Pull request's author is: ${REQUEST_AUTHOR_EMAIL}"
+              env:
+                REQUEST_AUTHOR_EMAIL: ${{ github.event.head_commit.author.email }}
+                
+            - name: Step that prints name of pull request's base branch
+              run: |
+                echo "Pull request's base branch is: ${BASE_BRANCH}"
+              env:
+                BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
+          
+            - uses: actions/checkout@v2
+              with:
+                ref: ${{ github.event.pull_request.head.ref }}
+
+            - uses: superbrothers/close-pull-request@v2
+              with:
+                  # Optional. Post a issue comment just before closing a pull request.
+                comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
+              env:
+                GITHUB_TOKEN: ${{ secrets.D8B_FRONTEND_TOKEN }}
+              if: ${{ success() }}
+              
+            - name: Send email if failure tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ failure() }}
+#always() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test failure
+                # Literal body:
+                body: Tests of ${{github.repository}} are failure
+                to: ko.grebennikov@gmail.com
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
+                # Optional attachments:
+                # attachments: attachments.zip,git.diff,./dist/static/main.js
+                    
+            - name: Send email if success tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+#always() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test success
+                # Literal body:
+                body: Tests of ${{github.repository}} are success
+                to: ko.grebennikov@gmail.com
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
+                # Optional attachments:
+                # attachments: attachments.zip,git.diff,./dist/static/main.js
+
+#            - name: Node ${{ matrix.node-version }}
+#              uses: actions/setup-node@v1
+#              with:
+#                  node-version: ${{ matrix.node-version }}
+
+#            - name: Install
+#              run: npm install
+
+ #           - name: copy env file
+ #             run: |
+ #               yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
   
-            - name: Test
-              run: npm run test -- --no-watch
+ #           - name: Test
+ #             run: npm run test -- --no-watch                 

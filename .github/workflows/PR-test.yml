@@ -1,0 +1,83 @@
+name: Testing workflow for pull request
+on: [pull_request,workflow_dispatch]
+jobs:
+      build:
+        name: Build
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Failure step
+              run: |
+                  ls
+                  
+            - name: Check 1
+              if: ${{ failure() }}
+              run: |
+                  echo "Check 1"
+
+            - name: Check 2
+              #if: ${{ failure() }}
+              run: |
+                  echo "Check 2"
+
+            - name: Check 3
+              if: ${{ failure() }}
+              run: |
+                  echo "Check 3"
+
+            - name: Check 4
+              #if: ${{ failure() }}
+              run: |
+                  echo "Check 4"
+                  
+            - name: Check 5
+              if: ${{ failure() }}
+              run: |
+                  echo "Check 5"
+                  
+            - name: git pull
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: |
+                    # cd ${{ secrets.APPDIR }}
+                    docker-compose -f /var/maxibooking/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+                  
+            - name: Send email if failure tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ failure() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test failure
+                # Literal body:
+                body: Tests of ${{github.repository}} on push are failure
+                to: k.grebennikov@maxi-booking.ru, konstantin.grebennikov@maxi-booking.com
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
+                # Optional attachments:
+                # attachments: attachments.zip,git.diff,./dist/static/main.js
+                      
+            - name: Send email if success tests
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Github Actions - test success
+                # Literal body:
+                body: Tests of ${{github.repository}} are success
+                to: k.grebennikov@maxi-booking.ru
+                from: Github actions # <user@example.com>
+                # Optional content type (defaults to text/plain):
+                content_type: text/html
+                # Optional attachments:
+                # attachments: attachments.zip,git.diff,./dist/static/main.js
