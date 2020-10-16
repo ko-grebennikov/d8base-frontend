@@ -1,4 +1,4 @@
-name: Tests for pull request
+name: Close pull request
 on: [pull_request,workflow_dispatch]
 jobs:
       build:
