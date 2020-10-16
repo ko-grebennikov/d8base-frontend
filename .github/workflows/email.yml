@@ -1,4 +1,4 @@
-name: Testing workflow for pull request
+name: Email test
 on: [workflow_dispatch]
 jobs:
       build:
