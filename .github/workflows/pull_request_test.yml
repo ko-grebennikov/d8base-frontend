@@ -1,4 +1,4 @@
-name: Tests for pull request
+name: Pull request check
 on: [pull_request,workflow_dispatch]
 jobs:
       build:
@@ -9,7 +9,6 @@ jobs:
                 node-version: [13.x]
 
         steps:
-            #- uses: actions/checkout@v1
             - name: Node ${{ matrix.node-version }}
               uses: actions/setup-node@v1
               with:
@@ -28,11 +27,12 @@ jobs:
             - name: copy env file
               run: |
                 yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
+
 #            - name: Lint
 #              run: npm run lint
 
-#            - name: Test
-#              run: npm run test -- --no-watch
+            - name: Test
+              run: npm run test -- --no-watch
                                         
             - name: Send email if success tests
               uses: dawidd6/action-send-mail@v2
@@ -42,27 +42,8 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Github Actions - test success
-                # Literal body:
-                body: Tests of ${{github.repository}} are success
-                to: ko.grebennikov@gmail.com
+                subject: New pull request - ${{github.repository}}. Tests are completed
+                body: New pull request - ${{github.repository}}. Tests are completed
+                to: ${{secrets.PR_SUCCESS_RECEPIENTS}}
                 from: Github actions # <user@example.com>
-                # Optional content type (defaults to text/plain):
                 content_type: text/html
-                # Optional attachments:
-                # attachments: attachments.zip,git.diff,./dist/static/main.js
-
-#            - name: Node ${{ matrix.node-version }}
-#              uses: actions/setup-node@v1
-#              with:
-#                  node-version: ${{ matrix.node-version }}
-
-#            - name: Install
-#              run: npm install
-
- #           - name: copy env file
- #             run: |
- #               yes| cp ./src/environments/environment.ts.dist ./src/environments/environment.ts
-  
- #           - name: Test
- #             run: npm run test -- --no-watch                 
