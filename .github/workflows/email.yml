@@ -4,7 +4,7 @@ on:
     branches:
       - master
     workflow_dispatch:
-      - master
+      # - master
 jobs:
       build:
         name: Build
