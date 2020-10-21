@@ -100,7 +100,7 @@ jobs:
                 username: mb
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
-                script: docker-compose -f /var/maxibooking/docker-compose -f d8b-back-main-composer.yml build d8b-back-web
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml build d8b-back-web
 
             - name: Start d8b-back-web container
               uses: appleboy/ssh-action@master
@@ -109,7 +109,7 @@ jobs:
                 username: mb
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
-                script: docker-compose -f /var/maxibooking/docker-compose -f d8b-back-main-composer.yml up -d d8b-back-web
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml up -d d8b-back-web
 
             # - name: Web restart
             #   uses: appleboy/ssh-action@master
