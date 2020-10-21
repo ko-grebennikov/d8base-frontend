@@ -66,7 +66,7 @@ jobs:
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: docker-compose -f /var/maxibooking/d8b-back-django-cli.yml run --rm d8b-back-django-cli ./manage.py collectstatic --no-input
 
-            - name: Massages generate
+            - name: Messages generate
               uses: appleboy/ssh-action@master
               with:
                 host: ${{ secrets.STAGEHOST }}
@@ -75,14 +75,50 @@ jobs:
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: docker-compose -f /var/maxibooking/d8b-back-django-cli.yml run --rm d8b-back-django-cli ./manage.py compilemessages -f
 
-            - name: Web restart
+            - name: Stop d8b-back-web container
               uses: appleboy/ssh-action@master
               with:
                 host: ${{ secrets.STAGEHOST }}
                 username: mb
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
-                script: docker container restart d8b-back-web
+                script: docker container stop d8b-back-web
+  
+            - name: Remove d8b-back-web container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container rm d8b-back-web
+  
+            - name: Build d8b-back-web container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/docker-compose -f d8b-back-main-composer.yml build d8b-back-web
+
+            - name: Start d8b-back-web container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/docker-compose -f d8b-back-main-composer.yml up -d d8b-back-web
+
+            # - name: Web restart
+            #   uses: appleboy/ssh-action@master
+            #   with:
+            #     host: ${{ secrets.STAGEHOST }}
+            #     username: mb
+            #     passphrase: ${{ secrets.STAGEDEPLPASS }}
+            #     key: ${{ secrets.STAGEDEPLKEY }}
+            #     script: docker container restart d8b-back-web
 
             - name: Send email if failure tests
               uses: dawidd6/action-send-mail@v2
