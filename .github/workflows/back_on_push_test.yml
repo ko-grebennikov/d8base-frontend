@@ -121,7 +121,7 @@ jobs:
                 password: ${{secrets.MAIL_PASSWORD}}
                 subject: Tests or deploy on push are failure - ${{github.repository}}
                 body: Tests or deploy on push are failure - ${{github.repository}}
-                to: {{secrets.FAIL_MAIL_RECEPIENTS}}
+                to: ${{secrets.FAIL_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
                     
