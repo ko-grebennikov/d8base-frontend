@@ -119,13 +119,13 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Tests or deploy on push are failure - ${{github.repository}}
+                subject: ${{github.repository}} - failure - tests or deploy on push 
                 body: Tests or deploy on push are failure - ${{github.repository}}
                 to: ${{secrets.FAIL_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
                     
-            - name: Send email if tests or deploy are successful
+            - name: Send email if tests and deploy are successful
               uses: dawidd6/action-send-mail@v2
               if: ${{ success() }}
               with:
@@ -133,8 +133,8 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Tests or deploy on push are successful - ${{github.repository}}
-                body: Tests or deploy on push are successful - ${{github.repository}}
+                subject: ${{github.repository}} - success - tests and deploy on push
+                body: Tests and deploy on push are successful - ${{github.repository}}
                 to: ${{secrets.SUCCESS_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
