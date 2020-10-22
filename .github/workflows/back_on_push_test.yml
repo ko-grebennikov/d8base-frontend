@@ -47,8 +47,17 @@ jobs:
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: docker-compose -f /var/maxibooking/d8b-back-npm-install.yml up
-                       
-            - name: Django migrate
+
+            - name: Rebuild container of the d8b-back-django-cli service
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-back-django-cli.yml build --no-cache d8b-back-django-cli
+  
+            - name: Run migrations
               uses: appleboy/ssh-action@master
               with:
                 host: ${{ secrets.STAGEHOST }}
@@ -100,7 +109,7 @@ jobs:
                 username: mb
                 passphrase: ${{ secrets.STAGEDEPLPASS }}
                 key: ${{ secrets.STAGEDEPLKEY }}
-                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml build d8b-back-web
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml build --no-cache d8b-back-web
 
             - name: Start d8b-back-web container
               uses: appleboy/ssh-action@master
@@ -119,7 +128,7 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: ${{github.repository}} - failure - tests or deploy on push 
+                subject: Failure - ${{github.repository}} - tests or deploy on push 
                 body: Tests or deploy on push are failure - ${{github.repository}}
                 to: ${{secrets.FAIL_MAIL_RECEPIENTS}}
                 from: Github actions
@@ -133,7 +142,7 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: ${{github.repository}} - success - tests and deploy on push
+                subject: Success - ${{github.repository}} - tests and deploy on push
                 body: Tests and deploy on push are successful - ${{github.repository}}
                 to: ${{secrets.SUCCESS_MAIL_RECEPIENTS}}
                 from: Github actions
