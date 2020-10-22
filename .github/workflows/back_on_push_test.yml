@@ -111,7 +111,7 @@ jobs:
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml up -d d8b-back-web
 
-            - name: Send email if failure tests
+            - name: Send email if tests or deploy are failure
               uses: dawidd6/action-send-mail@v2
               if: ${{ failure() }}
               with:
@@ -119,13 +119,13 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Github Actions - test failure
-                body: Tests of ${{github.repository}} on push are failure
+                subject: Tests or deploy on push are failure - ${{github.repository}}
+                body: Tests or deploy on push are failure - ${{github.repository}}
                 to: {{secrets.FAIL_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
                     
-            - name: Send email if success tests
+            - name: Send email if tests or deploy are successful
               uses: dawidd6/action-send-mail@v2
               if: ${{ success() }}
               with:
@@ -133,8 +133,8 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Github Actions - test success
-                body: Tests of ${{github.repository}} are success
+                subject: Tests or deploy on push are successful - ${{github.repository}}
+                body: Tests or deploy on push are successful - ${{github.repository}}
                 to: ${{secrets.SUCCESS_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
