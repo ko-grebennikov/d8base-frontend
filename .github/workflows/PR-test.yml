@@ -20,7 +20,7 @@ jobs:
                 password: ${{secrets.MAIL_PASSWORD}}
                 subject: Github Actions - test failure
                 # Literal body:
-                body: Tests of ${{github.repository}} are failure
+                body: Probe is failure
                 to: k.grebennikov@maxi-booking.ru
                 from: Github actions # <user@example.com>
                 # Optional content type (defaults to text/plain):
@@ -38,7 +38,7 @@ jobs:
                 password: ${{secrets.MAIL_PASSWORD}}
                 subject: Github Actions - test success
                 # Literal body:
-                body: Tests of ${{github.repository}} are success
+                body: Probe is success
                 to: k.grebennikov@maxi-booking.ru
                 from: Github actions # <user@example.com>
                 # Optional content type (defaults to text/plain):
