@@ -1,10 +1,11 @@
 name: Email test
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Testing workflow for pull request"]
+    types:
+      - completed  
   workflow_dispatch:
-      # - master
+
 jobs:
       build:
         name: Build
@@ -13,13 +14,14 @@ jobs:
         steps:
             - name: Send email if push in master
               uses: dawidd6/action-send-mail@v2
-              if: ${{ success() }}
+              if: ${{ github.event.workflow_run.conclusion == 'success' }}
+              # ${{ success() }}
               with:
                 server_address: smtp.yandex.ru
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Github Actions - push in master
+                subject: Github Actions - workflow test
                 # Literal body:
                 body: Tests of ${{github.repository}} are success
                 to: k.grebennikov@maxi-booking.ru
