@@ -7,26 +7,24 @@ on:
   workflow_dispatch:
 
 jobs:
-    job1:
-      if: ${{ github.event.workflow_run.conclusion == 'success' }}
-      build:
-        name: Build
-        runs-on: ubuntu-latest
-
-        steps:
-            - name: Send email if other workflow is success
-              uses: dawidd6/action-send-mail@v2
-              if: ${{ github.event.workflow_run.conclusion == 'success' }}
-              # ${{ success() }}
-              with:
-                server_address: smtp.yandex.ru
-                server_port: 465
-                username: ${{secrets.MAIL_USERNAME}}
-                password: ${{secrets.MAIL_PASSWORD}}
-                subject: Workflow test is success
-                # Literal body:
-                body: ${{github.repository}} are success
-                to: k.grebennikov@maxi-booking.ru
-                from: Github actions # <user@example.com>
-                # Optional content type (defaults to text/plain):
-                content_type: text/html
+    stage_deploy:
+      if: ${{ github.event.workflow_run.conclusion == 'success' }}   
+      name: Stage deploy
+      runs-on: ubuntu-latest
+      steps:
+      - name: Send email if other workflow is success
+        uses: dawidd6/action-send-mail@v2
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        # ${{ success() }}
+        with:
+          server_address: smtp.yandex.ru
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Workflow test is success
+          # Literal body:
+          body: ${{github.repository}} are success
+          to: k.grebennikov@maxi-booking.ru
+          from: Github actions # <user@example.com>
+          # Optional content type (defaults to text/plain):
+          content_type: text/html
