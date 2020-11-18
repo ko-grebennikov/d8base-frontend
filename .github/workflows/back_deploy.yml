@@ -97,6 +97,78 @@ jobs:
                 key: ${{ secrets.STAGEDEPLKEY }}
                 script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml up -d d8b-back-uwsgi
 
+            - name: Stop d8b-back-celery-beat container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container stop d8b-back-celery-beat
+  
+            - name: Remove d8b-back-celery-beat container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container rm d8b-back-celery-beat
+  
+            - name: Build d8b-back-celery-beat container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml build --no-cache d8b-back-celery-beat
+
+            - name: Start d8b-back-celery-beat container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml up -d d8b-back-celery-beat
+
+            - name: Stop d8b-back-celery-default container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container stop d8b-back-celery-default
+  
+            - name: Remove d8b-back-celery-default container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker container rm d8b-back-celery-default
+  
+            - name: Build d8b-back-celery-default container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml build --no-cache d8b-back-celery-default
+
+            - name: Start d8b-back-celery-default container
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.STAGEHOST }}
+                username: mb
+                passphrase: ${{ secrets.STAGEDEPLPASS }}
+                key: ${{ secrets.STAGEDEPLKEY }}
+                script: docker-compose -f /var/maxibooking/d8b-back-main-composer.yml up -d d8b-back-celery-default
+
             - name: Send email if tests or deploy are failure
               uses: dawidd6/action-send-mail@v2
               if: ${{ failure() }}
