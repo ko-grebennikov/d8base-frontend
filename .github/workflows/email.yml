@@ -14,17 +14,31 @@ jobs:
       steps:
       - name: Send email if other workflow is success
         uses: dawidd6/action-send-mail@v2
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        # ${{ success() }}
         with:
           server_address: smtp.yandex.ru
           server_port: 465
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
           subject: Workflow test is success
-          # Literal body:
           body: ${{github.repository}} are success
           to: k.grebennikov@maxi-booking.ru
           from: Github actions # <user@example.com>
-          # Optional content type (defaults to text/plain):
+          content_type: text/html
+
+    error_email:
+      if: ${{ github.event.workflow_run.conclusion == 'failure' }}   
+      name: Send error email
+      runs-on: ubuntu-latest
+      steps:
+      - name: Send email if other workflow is success
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.yandex.ru
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Workflow test is failure
+          body: ${{github.repository}} is failure
+          to: k.grebennikov@maxi-booking.ru
+          from: Github actions # <user@example.com>
           content_type: text/html
