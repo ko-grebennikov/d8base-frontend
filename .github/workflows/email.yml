@@ -1,7 +1,7 @@
 name: Email test
 on:
   workflow_run:
-    workflows: ["Testing workflow for pull request"]
+    workflows: ["Testing workflow for pull request1"]
     types:
       - completed  
   workflow_dispatch:
