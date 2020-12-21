@@ -19,7 +19,7 @@ jobs:
                 script: |
                     cd ${{ secrets.PRODAPPDIR }}
                     # ls
-                    # git pull    
+                    git pull    
 
             # - name: npm install
             #   uses: appleboy/ssh-action@master
