@@ -27,7 +27,7 @@ jobs:
                 username: d8b-deploy
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f ${{ DOCKERDIR }}/d8b-back-npm-cli.yml run --rm d8b-front-npm-cli npm install
+                script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-back-npm-cli.yml run --rm d8b-front-npm-cli npm install
                                        
             - name: front build
               uses: appleboy/ssh-action@master
@@ -36,7 +36,7 @@ jobs:
                 username: d8b-deploy
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f ${{ DOCKERDIR }}/d8b-back-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+                script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-back-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
 
             - name: clear web folder
               uses: appleboy/ssh-action@master
