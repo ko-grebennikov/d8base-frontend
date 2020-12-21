@@ -9,16 +9,16 @@ jobs:
                 node-version: [13.x]
 
         steps:
-            - name: git pull
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: |
-                    cd ${{ secrets.PRODAPPDIR }}
-                    git pull    
+            # - name: git pull
+            #   uses: appleboy/ssh-action@master
+            #   with:
+            #     host: ${{ secrets.PRODHOST }}
+            #     username: d8b-deploy
+            #     passphrase: ${{ secrets.PRODDEPLPASS }}
+            #     key: ${{ secrets.PRODDEPLKEY }}
+            #     script: |
+            #         cd ${{ secrets.PRODAPPDIR }}
+            #         git pull    
 
             - name: npm install
               uses: appleboy/ssh-action@master
@@ -27,7 +27,7 @@ jobs:
                 username: d8b-deploy
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f d8b-back-npm-cli.yml run --rm d8b-front-npm-cli npm install
+                script: docker-compose -f ${{ DOCKERDIR }}/d8b-back-npm-cli.yml run --rm d8b-front-npm-cli npm install
                                        
             - name: front build
               uses: appleboy/ssh-action@master
@@ -36,7 +36,7 @@ jobs:
                 username: d8b-deploy
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f d8b-back-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+                script: docker-compose -f ${{ DOCKERDIR }}/d8b-back-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
 
             - name: clear web folder
               uses: appleboy/ssh-action@master
@@ -49,7 +49,7 @@ jobs:
                   cd ${{ secrets.PRODWEBDIR }}
                   rm -rf ./*
 
-            - name: copy  folder
+            - name: copy build to web folder
               uses: appleboy/ssh-action@master
               with:
                 host: ${{ secrets.PRODHOST }}
@@ -68,7 +68,7 @@ jobs:
                 key: ${{ secrets.PRODDEPLKEY }}
                 script: docker container restart d8b-nginx
 
-            - name: Send email if deploy is successful
+            - name: send email if deploy is successful
               uses: dawidd6/action-send-mail@v2
               if: ${{ success() }}
               with:
@@ -82,7 +82,7 @@ jobs:
                 from: Github actions
                 content_type: text/html
 
-            - name: Send email if deploy is failure
+            - name: send email if deploy is failure
               uses: dawidd6/action-send-mail@v2
               if: ${{ failure() }}
               with:
