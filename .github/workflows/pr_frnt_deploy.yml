@@ -1,0 +1,97 @@
+name: front prod deploy
+on: [workflow_dispatch]
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [13.x]
+
+        steps:
+            - name: git pull
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: mb
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: |
+                    cd ${{ secrets.PRODAPPDIR }}
+                    git pull    
+
+            - name: npm install
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: mb
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: docker-compose -f d8b-back-npm-cli.yml run --rm d8b-front-npm-cli npm install
+                                       
+            - name: front build
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: mb
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: docker-compose -f d8b-back-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+
+            - name: clear web folder
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: mb
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: |
+                  cd ${{ secrets.PRODWEBDIR }}
+                  rm -rf ./*
+
+            - name: copy  folder
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: mb
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: |
+                  cp -R ${{ secrets.PRODAPPDIR }}/dist/d8base/* ${{ secrets.PRODWEBDIR }}
+
+            - name: nginx restart
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: mb
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: docker container restart d8b-nginx
+
+            - name: Send email if deploy is successful
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ success() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Success - prod deploy of frontend - ${{github.repository}}
+                body: Prod deploy of frontend(${{github.repository}}) completed successfully
+                to: ${{secrets.PD_SUCCESS_MAIL_RECEPIENTS}}
+                from: Github actions
+                content_type: text/html
+
+            - name: Send email if deploy is failure
+              uses: dawidd6/action-send-mail@v2
+              if: ${{ failure() }}
+              with:
+                server_address: smtp.yandex.ru
+                server_port: 465
+                username: ${{secrets.MAIL_USERNAME}}
+                password: ${{secrets.MAIL_PASSWORD}}
+                subject: Failure - prod deploy of frontend ${{github.repository}}
+                body: Prod deploy of frontend(${{github.repository}}) is failure
+                to: ${{secrets.PD_FAILURE_MAIL_RECEPIENTS}}
+                from: Github actions
+                content_type: text/html
