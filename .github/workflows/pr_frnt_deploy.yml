@@ -9,7 +9,37 @@ jobs:
                 node-version: [13.x]
 
         steps:
-            # - name: git pull
+            - name: git pull
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.PRODHOST }}
+                username: d8b-deploy
+                passphrase: ${{ secrets.PRODDEPLPASS }}
+                key: ${{ secrets.PRODDEPLKEY }}
+                script: |
+                    cd ${{ secrets.PRODAPPDIR }}
+                    ls
+                    # git pull    
+
+            # - name: npm install
+            #   uses: appleboy/ssh-action@master
+            #   with:
+            #     host: ${{ secrets.PRODHOST }}
+            #     username: d8b-deploy
+            #     passphrase: ${{ secrets.PRODDEPLPASS }}
+            #     key: ${{ secrets.PRODDEPLKEY }}
+            #     script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli npm install
+                                       
+            # - name: front build
+            #   uses: appleboy/ssh-action@master
+            #   with:
+            #     host: ${{ secrets.PRODHOST }}
+            #     username: d8b-deploy
+            #     passphrase: ${{ secrets.PRODDEPLPASS }}
+            #     key: ${{ secrets.PRODDEPLKEY }}
+            #     script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+
+            # - name: clear web folder
             #   uses: appleboy/ssh-action@master
             #   with:
             #     host: ${{ secrets.PRODHOST }}
@@ -17,56 +47,27 @@ jobs:
             #     passphrase: ${{ secrets.PRODDEPLPASS }}
             #     key: ${{ secrets.PRODDEPLKEY }}
             #     script: |
-            #         cd ${{ secrets.PRODAPPDIR }}
-            #         git pull    
+            #       cd ${{ secrets.PRODWEBDIR }}
+            #       rm -rf ./*
 
-            - name: npm install
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli npm install
-                                       
-            - name: front build
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-front-npm-cli.yml run --rm d8b-front-npm-cli node_modules/.bin/ng build --prod
+            # - name: copy build to web folder
+            #   uses: appleboy/ssh-action@master
+            #   with:
+            #     host: ${{ secrets.PRODHOST }}
+            #     username: d8b-deploy
+            #     passphrase: ${{ secrets.PRODDEPLPASS }}
+            #     key: ${{ secrets.PRODDEPLKEY }}
+            #     script: |
+            #       cp -R ${{ secrets.PRODAPPDIR }}/dist/d8base/* ${{ secrets.PRODAPPDIR }}/${{ secrets.PRODWEBDIR }}
 
-            - name: clear web folder
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: |
-                  cd ${{ secrets.PRODWEBDIR }}
-                  rm -rf ./*
-
-            - name: copy build to web folder
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: |
-                  cp -R ${{ secrets.PRODAPPDIR }}/dist/d8base/* ${{ secrets.PRODWEBDIR }}
-
-            - name: nginx restart
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: docker container restart d8b-nginx
+            # - name: nginx restart
+            #   uses: appleboy/ssh-action@master
+            #   with:
+            #     host: ${{ secrets.PRODHOST }}
+            #     username: d8b-deploy
+            #     passphrase: ${{ secrets.PRODDEPLPASS }}
+            #     key: ${{ secrets.PRODDEPLKEY }}
+            #     script: docker container restart d8b-nginx
 
             - name: send email if deploy is successful
               uses: dawidd6/action-send-mail@v2
