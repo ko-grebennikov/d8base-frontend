@@ -18,9 +18,10 @@ jobs:
                 key: ${{ secrets.PRODDEPLKEY }}
                 script: |
                     cd ${{ secrets.PRODAPPDIR }}
-                    pwd
-                    ssh-add -l
-                    git pull -v
+                    # pwd
+                    # ssh-add -l
+                    # git pull -v
+                    printenv
 
             # - name: npm install
             #   uses: appleboy/ssh-action@master
