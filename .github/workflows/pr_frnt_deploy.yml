@@ -57,7 +57,7 @@ jobs:
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
                 script: |
-                  cp -R ${{ secrets.PRODAPPDIR }}/dist/d8base/* ${{ secrets.PRODAPPDIR }}/${{ secrets.PRODWEBDIR }}
+                  cp -R ${{ secrets.PRODAPPDIR }}/dist/d8base/* ${{ secrets.PRODWEBDIR }}
 
             - name: nginx restart
               uses: appleboy/ssh-action@master
