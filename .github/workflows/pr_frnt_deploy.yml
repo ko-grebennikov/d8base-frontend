@@ -19,6 +19,7 @@ jobs:
                 script: |
                     cd ${{ secrets.PRODAPPDIR }}
                     pwd
+                    ssh-add -l
                     git pull -v
 
             # - name: npm install
