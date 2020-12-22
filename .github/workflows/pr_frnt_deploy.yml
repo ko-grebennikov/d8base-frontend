@@ -13,12 +13,12 @@ jobs:
               uses: appleboy/ssh-action@master
               with:
                 host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
+                username: d8b-common
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
                 script: |
                     cd ${{ secrets.PRODAPPDIR }}
-                    ls
+                    pwd
                     git remote -v   
 
             # - name: npm install
