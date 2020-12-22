@@ -65,15 +65,6 @@ jobs:
                 key: ${{ secrets.PRODDEPLKEY }}
                 script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-back-django-cli.yml run --rm d8b-back-django-cli ./manage.py compilemessages -f
 
-            - name: build uwsgi container
-              uses: appleboy/ssh-action@master
-              with:
-                host: ${{ secrets.PRODHOST }}
-                username: d8b-deploy
-                passphrase: ${{ secrets.PRODDEPLPASS }}
-                key: ${{ secrets.PRODDEPLKEY }}
-                script: docker-compose -f ${{ secrets.DOCKERDIR }}/d8b-back-main-composer.yml
-
             - name: stop uwsgi container
               uses: appleboy/ssh-action@master
               with:
