@@ -17,7 +17,7 @@ jobs:
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
                 script: |
-                    cd ${{ secrets.PRODAPPDIR }}
+                    cd ${{ secrets.BACKPRODAPPDIR }}
                     git pull    
 
             - name: build image
@@ -27,7 +27,7 @@ jobs:
                 username: d8b-deploy
                 passphrase: ${{ secrets.PRODDEPLPASS }}
                 key: ${{ secrets.PRODDEPLKEY }}
-                script: docker build --tag ${{ secrets.BACKIMAGE }} -f ${{ secrets.DOCKERDIR }}/d8b-back-python/Dockerfile ${{ secrets.PRODAPPDIR }}
+                script: docker build --tag ${{ secrets.BACKIMAGE }} -f ${{ secrets.DOCKERDIR }}/d8b-back-python/Dockerfile ${{ secrets.BACKPRODAPPDIR }}
 
             - name: npm install
               uses: appleboy/ssh-action@master
@@ -163,8 +163,8 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Success - prod deploy of frontend - ${{github.repository}}
-                body: Prod deploy of frontend(${{github.repository}}) completed successfully
+                subject: Success - prod deploy of backend - ${{github.repository}}
+                body: Prod deploy of backend(${{github.repository}}) completed successfully
                 to: ${{secrets.PD_SUCCESS_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
@@ -177,8 +177,8 @@ jobs:
                 server_port: 465
                 username: ${{secrets.MAIL_USERNAME}}
                 password: ${{secrets.MAIL_PASSWORD}}
-                subject: Failure - prod deploy of frontend ${{github.repository}}
-                body: Prod deploy of frontend(${{github.repository}}) is failure
+                subject: Failure - prod deploy of backend ${{github.repository}}
+                body: Prod deploy of backend(${{github.repository}}) is failure
                 to: ${{secrets.PD_FAILURE_MAIL_RECEPIENTS}}
                 from: Github actions
                 content_type: text/html
