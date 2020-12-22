@@ -19,7 +19,7 @@ jobs:
                 script: |
                     cd ${{ secrets.PRODAPPDIR }}
                     pwd
-                    git remote -v   
+                    git pull -v
 
             # - name: npm install
             #   uses: appleboy/ssh-action@master
