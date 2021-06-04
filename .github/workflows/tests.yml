@@ -50,7 +50,7 @@ jobs:
             - name: Send email if success tests
               uses: dawidd6/action-send-mail@v2
               if: ${{ success() }}
-#always() }}
+   #always() }}
               with:
                 server_address: smtp.yandex.ru
                 server_port: 465
