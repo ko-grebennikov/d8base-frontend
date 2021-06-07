@@ -49,4 +49,4 @@ jobs:
       runs-on: ubuntu-latest
       steps:
       - name: Log event type
-        run echo "$GITHUB_EVENT_NAME"
+        run: echo "$GITHUB_EVENT_NAME"
